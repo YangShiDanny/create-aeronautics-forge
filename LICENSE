@@ -1,18 +1,29 @@
-# License / 许可说明
+# License / 许可与声明
 
-> 本项目 **Create Aeronautics（Forge 1.20.1）** 是 **非官方、第三方移植（Unofficial Third-Party Port）**。
-> This project is an **unofficial, third-party port**. It is **not** published or endorsed by the original authors.
+> ## 本项目是什么 / What this project is
+>
+> **Create Aeronautics — 第三方移植版（Forge 1.20.1）**
+> 本仓库是 **Create: Aeronautics** 及其配套子项目（SubLevel / Sable / Simulated / Offroad 等）
+> 从**原版 NeoForge 1.21.1** **移植到 Forge 1.20.1** 的**非官方、第三方移植版**。
+> 它**不属于**原开发团队，未获官方授权。
+>
+> **Create Aeronautics — Third-Party Port (Forge 1.20.1)**
+> This repository is an **unofficial, third-party port** of **Create: Aeronautics** (and its sub-projects
+> SubLevel / Sable / Simulated / Offroad) **ported from the original NeoForge 1.21.1 to Forge 1.20.1**.
+> It is **not** part of the original development team and is **not officially authorized**.
 
 ---
 
 ## ⚠️ 重要声明 / Important Notice
 
-- 本仓库为**代码存档与学习用途**，未获得原模组官方授权。
-  This repository is for **code archival and learning only**; it is **not officially authorized** by the original mod authors.
-- 本仓库**不包含任何美术资源**（贴图 / 模型 / 音频 / 字体 / 图标等）。相关资源版权归原模组作者所有（All Rights Reserved）。
-  This repository **does NOT include any art assets** (textures / models / audio / fonts / icons, etc.). Those assets remain **All Rights Reserved** by the original authors.
-- 代码许可沿用原模组的 MIT 许可（见第一节）；**移植改动部分**的版权归移植者所有，并**独立于原模组官方版权**。
-  Code follows the original mod's MIT License (Section 1). Copyright of the **porting changes** belongs to the porter and is **independent of the original mod's copyright**.
+- **本仓库为代码存档与学习用途，未获得原模组官方授权。**
+  **This repository is for code archival and learning only; it is NOT officially authorized by the original mod authors.**
+- **本仓库不包含任何美术资源**（贴图 / 模型 / 音频 / 字体 / 图标等）。相关资源版权归原模组作者所有（All Rights Reserved）。
+  **This repository does NOT include any art assets** (textures / models / audio / fonts / icons). Those assets remain **All Rights Reserved** by the original authors.
+- **代码许可沿用原模组的 MIT 许可（见第一节）；移植改动部分的版权归移植者所有，并独立于原模组官方版权。**
+  **Code follows the original mod's MIT License (Section 1); the porting changes are copyrighted by the porter and are independent of the original mod's copyright.**
+- **下方第三节所列第三方库独立于官方，版权归各自作者，与本移植版分开计。**
+  **The third-party libraries in Section 3 are separate from the official mod, copyrighted by their respective authors.**
 
 ---
 
@@ -46,8 +57,8 @@ SOFTWARE.
 ```
 
 > **移植者（Porter）**：Eewin-yiun（逸云）。
-> 在 MIT 再分发条款之外，本项目**额外明确**：本次移植所产生的改动（porting changes）版权归移植者所有；
-> 但整体再分发仍须遵循上方 MIT 许可，且须同时遵守原模组的美术资源 All Rights Reserved 条款（见第二节）。
+> 在 MIT 再分发条款之外，本移植版**额外明确**：本次移植产生的改动（porting changes）版权归移植者所有；
+> 但整体再分发仍须遵循上方 MIT 许可，且须同时遵守原模组美术资源 All Rights Reserved 条款（见第二节）。
 >
 > **Porter**: Eewin-yiun. Beyond the MIT redistribution terms above, the **porting changes** are
 > copyrighted by the porter; overall redistribution must still follow the MIT License above and the
@@ -76,7 +87,7 @@ This license applies to any files under the following directories:
 ---
 
 ## 三、第三方依赖（独立于官方，版权归各自作者）
-## Third-Party Dependencies (separate from the official mod; copyrighted by their respective authors)
+### Third-Party Dependencies (separate from the official mod; copyrighted by their respective authors)
 
 本仓库在 `libs/` 与 `src/main/resources/natives/` 下附带运行所需的第三方库。
 这些库**不是原模组官方代码的一部分**，其版权与许可归各自原作者所有，并以「原样（as-is）」提供。
@@ -84,7 +95,7 @@ The repository bundles third-party libraries under `libs/` and `src/main/resourc
 These libraries are **NOT part of the official mod's code**; their copyright and licenses belong to their respective
 authors and are provided "as-is".
 
-### 3.1 Java 依赖 / Java dependencies（`libs/`）
+#### 3.1 Java 依赖 / Java dependencies（`libs/`）
 
 | 库名 Library | 文件名 File | 版本 Version | 作者 / 组织 Author | 许可 License |
 | --- | --- | --- | --- | --- |
@@ -96,7 +107,7 @@ authors and are provided "as-is".
 | MixinExtras | `mixinextras-0.4.1.jar` | 0.4.1 | LlamaLad7 | MIT |
 | MixinExtras（Forge 版） | `mixinextras-forge-0.4.1.jar` | 0.4.1 | LlamaLad7 | MIT |
 
-### 3.2 原生库 / Native libraries（`src/main/resources/natives/sable_rapier/`）
+#### 3.2 原生库 / Native libraries（`src/main/resources/natives/sable_rapier/`）
 
 | 库名 Library | 文件 File | 作者 / 组织 Author | 许可 License |
 | --- | --- | --- | --- |
@@ -114,9 +125,28 @@ authors and are provided "as-is".
 
 ---
 
-## 四、免责声明 / Disclaimer
+## 四、移植版稳定性免责声明 / Port Stability Disclaimer
+
+> ⚠️ **本移植版可能不如原版稳定。**
+> 本移植版是社区个人从 NeoForge 1.21.1 手动移植到 Forge 1.20.1 的产物，**未经原开发团队测试与审核**，
+> 可能含有**原版中不存在的 bug、崩溃、卡顿或存档损坏风险**。
+> 使用本移植版**风险自担**：请务必定期备份你的游戏存档与世界文件；因使用本移植版导致的任何
+> 存档丢失、数据损坏或设备损坏，移植者与原模组作者均**不承担责任**。
+>
+> ⚠️ **This port may be LESS STABLE than the original.**
+> This port was manually ported by an individual community member from NeoForge 1.21.1 to Forge 1.20.1 and is
+> **NOT tested or reviewed by the original developers**. It may contain **bugs, crashes, performance issues, or
+> world-corruption risks that do NOT exist in the original**.
+> Use this port **at your own risk**: always back up your save files and worlds. The porter and the original
+> authors are **NOT responsible** for any save loss, data corruption, or device damage caused by using this port.
+
+---
+
+## 五、一般免责声明 / General Disclaimer
 
 本移植项目按「原样（as-is）」提供，不提供任何明示或暗示的担保。
 原模组名称、美术与商标归原权利人所有；本项目与其**无隶属关系、未获其背书**。
+如原模组作者或权利方要求下架，将无条件配合。
 This port is provided "as-is", without warranty of any kind. Original mod names, art, and trademarks
 belong to their respective owners; this project is **not affiliated with and not endorsed by** them.
+If the original authors or rights holders request takedown, we will comply unconditionally.

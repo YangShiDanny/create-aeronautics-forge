@@ -1,15 +1,122 @@
-版权声明 / Copyright Notice
-================================
+# License / 许可说明
 
-本仓库（Create Aeronautics Forge 1.20.1 第三方移植代码存档）为**非官方、第三方移植**，
-所有源代码与相关配置的版权归各自的原模组作者 / 权利方所有（All Rights Reserved）。
+> 本项目 **Create Aeronautics（Forge 1.20.1）** 是 **非官方、第三方移植（Unofficial Third-Party Port）**。
+> This project is an **unofficial, third-party port**. It is **not** published or endorsed by the original authors.
 
-本仓库：
-  1. 仅作为代码存档与学习用途，未获得原模组官方授权；
-  2. 不重新分发任何美术素材（贴图、模型、音频等），相关版权归原模组作者所有；
-  3. 第三方依赖（libs/）与原生库（natives/）版权归其各自作者 / 项目所有。
+---
 
-使用、修改、再分发本仓库内容须遵守原模组的许可证与版权要求。
-商业使用或公开再分发前，请先取得原模组作者授权。
+## ⚠️ 重要声明 / Important Notice
 
-详见 README.md。
+- 本仓库为**代码存档与学习用途**，未获得原模组官方授权。
+  This repository is for **code archival and learning only**; it is **not officially authorized** by the original mod authors.
+- 本仓库**不包含任何美术资源**（贴图 / 模型 / 音频 / 字体 / 图标等）。相关资源版权归原模组作者所有（All Rights Reserved）。
+  This repository **does NOT include any art assets** (textures / models / audio / fonts / icons, etc.). Those assets remain **All Rights Reserved** by the original authors.
+- 代码许可沿用原模组的 MIT 许可（见第一节）；**移植改动部分**的版权归移植者所有，并**独立于原模组官方版权**。
+  Code follows the original mod's MIT License (Section 1). Copyright of the **porting changes** belongs to the porter and is **independent of the original mod's copyright**.
+
+---
+
+## 一、代码许可（MIT） / Code License (MIT)
+
+以下许可文本沿用原模组 `LICENSE.md` 的代码许可部分。
+The following text is taken from the original mod's `LICENSE.md` (Code License section).
+
+```
+MIT License
+
+Copyright (c) The Simulated Team / The Creators of Aeronautics
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+> **移植者（Porter）**：Eewin-yiun（逸云）。
+> 在 MIT 再分发条款之外，本项目**额外明确**：本次移植所产生的改动（porting changes）版权归移植者所有；
+> 但整体再分发仍须遵循上方 MIT 许可，且须同时遵守原模组的美术资源 All Rights Reserved 条款（见第二节）。
+>
+> **Porter**: Eewin-yiun. Beyond the MIT redistribution terms above, the **porting changes** are
+> copyrighted by the porter; overall redistribution must still follow the MIT License above and the
+> original mod's All Rights Reserved assets terms (Section 2).
+
+---
+
+## 二、美术资源许可（All Rights Reserved） / Assets License (All Rights Reserved)
+
+以下许可文本沿用原模组 `LICENSE.md` 的美术资源许可部分。
+The following text is taken from the original mod's `LICENSE.md` (Assets License section).
+
+```
+All Rights Reserved
+Copyright (c) The Simulated Team / The Creators of Aeronautics
+
+This license applies to any files under the following directories:
+- ./aeronautics/common/src/main/resources/assets/
+- ./simulated/common/src/main/resources/assets/
+- ./offroad/common/src/main/resources/assets/
+```
+
+> 上述目录中的美术资源**均不在本仓库内**（已按用户要求全部排除）。如须获取，请从原模组（或其允许的来源）取得。
+> The art assets in those directories are **NOT present in this repository** (excluded as required). Obtain them from the original mod if needed.
+
+---
+
+## 三、第三方依赖（独立于官方，版权归各自作者）
+## Third-Party Dependencies (separate from the official mod; copyrighted by their respective authors)
+
+本仓库在 `libs/` 与 `src/main/resources/natives/` 下附带运行所需的第三方库。
+这些库**不是原模组官方代码的一部分**，其版权与许可归各自原作者所有，并以「原样（as-is）」提供。
+The repository bundles third-party libraries under `libs/` and `src/main/resources/natives/` required to build/run.
+These libraries are **NOT part of the official mod's code**; their copyright and licenses belong to their respective
+authors and are provided "as-is".
+
+### 3.1 Java 依赖 / Java dependencies（`libs/`）
+
+| 库名 Library | 文件名 File | 版本 Version | 作者 / 组织 Author | 许可 License |
+| --- | --- | --- | --- | --- |
+| Create | `create-1.20.1-6.0.8.jar` | 1.20.1-6.0.8 | simibubi / The Creators of Create | MIT |
+| Flywheel | `flywheel-forge-1.20.1-1.0.5.jar` | 1.20.1-1.0.5 | jozufozu（simibubi 团队） | MIT |
+| Ponder | `Ponder-Forge-1.20.1-1.0.91.jar` | 1.20.1-1.0.91 | simibubi / jozufozu（Create 生态） | MIT |
+| Registrate | `Registrate-MC1.20-1.3.3.jar` | MC1.20-1.3.3 | tterrag1098 | MIT |
+| Shoulder Surfing | `ShoulderSurfing-Forge-1.20.1-5.0.4.jar` | 1.20.1-5.0.4 | Exopandora（原作 Sabar） | MIT |
+| MixinExtras | `mixinextras-0.4.1.jar` | 0.4.1 | LlamaLad7 | MIT |
+| MixinExtras（Forge 版） | `mixinextras-forge-0.4.1.jar` | 0.4.1 | LlamaLad7 | MIT |
+
+### 3.2 原生库 / Native libraries（`src/main/resources/natives/sable_rapier/`）
+
+| 库名 Library | 文件 File | 作者 / 组织 Author | 许可 License |
+| --- | --- | --- | --- |
+| Rapier 物理引擎（桌面端） | `sable_rapier_binaries.zip.l4z` | Dimforge（Sébastien Crozet） | Apache-2.0 |
+| Rapier 物理引擎（安卓端） | `sable_rapier_android/<abi>/libsable_rapier.so`（arm64-v8a / armeabi-v7a / x86 / x86_64） | Dimforge（Sébastien Crozet） | Apache-2.0 |
+
+> Rapier 的完整许可文本见仓库内 `src/main/resources/natives/sable_rapier/LICENSE-RAPIER`。
+> The full Rapier license text is at `src/main/resources/natives/sable_rapier/LICENSE-RAPIER` in this repository.
+
+> 上述各库的精确许可条款以各自**上游仓库 / 分发页面**公布为准。使用、修改、再分发本仓库时，
+> 须**同时**遵守原模组的 MIT 许可、美术资源 All Rights Reserved 条款，以及上述各第三方库的许可。
+> The exact terms of each library are governed by its **upstream repository / distribution page**. Use, modification,
+> and redistribution of this repository must comply with **both** the original mod's MIT License, its All Rights
+> Reserved assets terms, **and** the licenses of the third-party libraries listed above.
+
+---
+
+## 四、免责声明 / Disclaimer
+
+本移植项目按「原样（as-is）」提供，不提供任何明示或暗示的担保。
+原模组名称、美术与商标归原权利人所有；本项目与其**无隶属关系、未获其背书**。
+This port is provided "as-is", without warranty of any kind. Original mod names, art, and trademarks
+belong to their respective owners; this project is **not affiliated with and not endorsed by** them.

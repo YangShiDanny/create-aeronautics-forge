@@ -23,8 +23,16 @@
 - Java 源码、Mixin 配置（mixins.json / accesswidener）
 - `mods.toml` / `pack.mcmeta` / `architectury.common.json` 等必需配置
 - Gradle 构建脚本（`build.gradle` / `settings.gradle` / `gradle.properties` / `build_mod.bat`）
-- 第三方依赖（`libs/`，含 Create / Flywheel / Ponder / Registrate 等）
-- 原生库（`natives/`，含 Rapier 安卓原生库等）
+- 第三方 Java 依赖（`libs/`，**独立于官方**，版权归各自作者）：
+  - Create `1.20.1-6.0.8`（MIT，simibubi）
+  - Flywheel `1.20.1-1.0.5`（MIT，jozufozu）
+  - Ponder `1.20.1-1.0.91`（MIT，simibubi / jozufozu）
+  - Registrate `MC1.20-1.3.3`（MIT，tterrag1098）
+  - Shoulder Surfing `1.20.1-5.0.4`（MIT，Exopandora）
+  - MixinExtras `0.4.1` 与 MixinExtras-Forge `0.4.1`（MIT，LlamaLad7）
+- 原生库（`src/main/resources/natives/sable_rapier/`，**独立于官方**）：
+  - Rapier 物理引擎（桌面端 `sable_rapier_binaries.zip.l4z` + 安卓端 `libsable_rapier.so`，Apache-2.0，Dimforge）
+  - 完整库名 / 版本 / 许可对照见 `LICENSE` 第三节。
 
 ❌ **不包含内容**
 - 贴图（`*.png`）、音频（`*.ogg`）、3D 模型（`*.obj` / `*.bbmodel` / `*.fbx`）

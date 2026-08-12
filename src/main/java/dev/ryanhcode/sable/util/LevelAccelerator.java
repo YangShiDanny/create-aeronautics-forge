@@ -1,0 +1,213 @@
+package dev.ryanhcode.sable.util;
+
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.mixin.level_accelerator.ServerChunkCacheAccessor;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.ticks.LevelChunkTicks;
+import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Speeds up block/fluid state, chunk, and level access with caching and raw access.
+ */
+public class LevelAccelerator implements BlockGetter {
+    public static final boolean USE_CACHE_MAP = false;
+
+    private final Level level;
+    private long cachedChunkPos = 0L;
+    private LevelChunk cachedChunkObj = null;
+    private final int minBuildHeight;
+    private final int minSection;
+    private final int maxBuildHeight;
+    private final Long2ObjectMap<LevelChunk> cachedLevelChunks = new Long2ObjectOpenHashMap<>();
+
+    public LevelAccelerator(final Level level) {
+        this.level = level;
+        this.minBuildHeight = level.getMinBuildHeight();
+        this.maxBuildHeight = level.getMaxBuildHeight();
+        this.minSection = level.getMinSection();
+    }
+
+    public void clearCache() {
+        this.cachedLevelChunks.clear();
+        this.cachedChunkObj = null;
+        this.cachedChunkPos = 0L;
+    }
+
+    public void setBlockFast(final BlockPos blockPos, final BlockState blockState) {
+        final LevelChunk chunk = this.getChunk(blockPos);
+        final BlockState blockState2 = chunk.setBlockState(blockPos, blockState, false);
+        if (blockState2 == null) {
+            return;
+        }
+
+        this.level.sendBlockUpdated(blockPos, blockState2, blockState, 3);
+    }
+
+    @Override
+    public  BlockEntity getBlockEntity(final BlockPos blockPos) {
+        return this.level.getBlockEntity(blockPos);
+    }
+
+    @Override
+    public BlockState getBlockState(final BlockPos pos) {
+        final LevelChunk chunk = this.getChunk(pos);
+        return this.getBlockState(chunk, pos);
+    }
+
+    /**
+     * Gets the blockstate at a position in a chunk given that the chunk is already known.
+     *
+     * @param chunk The chunk to get the blockstate from
+     * @param pos   The position to get the blockstate from
+     * @return The blockstate at the position
+     */
+    public BlockState getBlockState(final LevelChunk chunk, final BlockPos pos) {
+        if (pos.getY() < this.minBuildHeight || pos.getY() >= this.maxBuildHeight) {
+            return Blocks.AIR.defaultBlockState();
+        }
+
+        final LevelChunkSection section = chunk.getSection((pos.getY() >> 4) - this.minSection);
+        return section.getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockPos pos) {
+        final LevelChunk chunk = this.getChunk(pos);
+
+        return chunk.getFluidState(pos);
+    }
+
+    public LevelChunk getChunk(final BlockPos pos) {
+        return this.getChunk(pos.getX() >> 4, pos.getZ() >> 4);
+    }
+
+    public LevelChunk getChunk(final int chunkX, final int chunkZ) {
+        final long pos = ChunkPos.asLong(chunkX, chunkZ);
+
+        if (pos == this.cachedChunkPos && this.cachedChunkObj != null) {
+            return this.cachedChunkObj;
+        }
+
+        final LevelChunk chunk;
+
+        if (USE_CACHE_MAP) {
+            chunk = this.cachedLevelChunks.computeIfAbsent(pos, x -> this.grabChunkFast(chunkX, chunkZ, pos));
+        } else {
+            chunk = this.grabChunkFast(chunkX, chunkZ, pos);
+        }
+
+        this.cachedChunkObj = chunk;
+        this.cachedChunkPos = pos;
+
+        return chunk;
+    }
+
+    private  LevelChunk grabChunkFast(final int chunkX, final int chunkZ, final long pos) {
+        if (this.level.isClientSide) {
+            return this.level.getChunk(chunkX, chunkZ);
+        }
+
+        // Forge 1.20.1's ServerChunkCache.getChunk(create=true) throws
+        // IllegalStateException ("No chunk holder after ticket has been added") for plot
+        // chunks that live only in ChunkMap.updatingChunkMap. They are promoted
+        // to visibleChunkMap later, inside ChunkMap.tick() during ServerLevel.tick()
+        // - BEFORE sable's sub-level tick (injected at ServerLevel.tick HEAD) runs.
+        // NeoForge 1.21 tolerated this; Forge does not. The SubLevelContainer
+        // holds the authoritative LevelChunk for every plot chunk, keyed by its
+        // GLOBAL @20M chunk coordinate. getBoundingBox() returns global block
+        // coords, so chunkX/chunkZ are already global here - read straight from it.
+        final SubLevelContainer container = SubLevelContainer.getContainer(this.level);
+        if (container != null) {
+            final LevelChunk plotChunk = container.getChunk(new ChunkPos(chunkX, chunkZ));
+            if (plotChunk != null) {
+                return plotChunk;
+            }
+        }
+
+        // Non-plot (normal overworld) chunk: vanilla fast path.
+        final ChunkHolder holder = ((ServerChunkCacheAccessor) this.level.getChunkSource()).invokeGetVisibleChunkIfPresent(pos);
+
+        if (holder != null) {
+            // 1.20.1: getFullChunkFuture() may not be complete yet (neighbour chunks during tick).
+            // getNow(null) returns null when not done -> guard with isDone() before touching .left().
+            final var fullChunkFuture = holder.getFullChunkFuture();
+            if (fullChunkFuture.isDone()) {
+                final LevelChunk res = fullChunkFuture.getNow(null).left().orElse(null);
+
+                if (res != null)
+                    return res;
+            }
+        }
+
+        // Last resort. On Forge 1.20.1, ServerChunkCache.getChunk(create=true) throws
+        // IllegalStateException ("No chunk holder after ticket has been added") for plot
+        // chunks that live ONLY in ChunkMap.updatingChunkMap and were never promoted
+        // to visibleChunkMap within this tick. We already tried the authoritative
+        // SubLevelContainer lookup above (it returned null), so this coordinate is
+        // an unallocated-in-bounds plot-region chunk that has no holder. Rather
+        // than crash the server tick, return a throwaway empty (air) chunk so
+        // callers like getBlockState() safely read air.
+        try {
+            return this.level.getChunk(chunkX, chunkZ);
+        } catch (final IllegalStateException ex) {
+            return this.createEmptyChunk(chunkX, chunkZ);
+        }
+    }
+
+    /**
+     * Builds a detached, fully-air {@link LevelChunk} for the given chunk coordinates.
+     * Used only as a crash-safe fallback when the vanilla chunk cache refuses to
+     * hand us a plot chunk that lives solely in ChunkMap.updatingChunkMap. The
+     * returned chunk is never registered anywhere, so mutating it is a no-op for
+     * the world - which is acceptable, because these coordinates hold no real blocks.
+     */
+    private LevelChunk createEmptyChunk(final int chunkX, final int chunkZ) {
+        final Level level = this.level;
+        final int sectionCount = level.getSectionsCount();
+        final LevelChunkSection[] sections = new LevelChunkSection[sectionCount];
+        final Registry<Biome> biomeRegistry = level.registryAccess().registryOrThrow(Registries.BIOME);
+        for (int i = 0; i < sectionCount; ++i) {
+            sections[i] = new LevelChunkSection(
+                    new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES),
+                    new PalettedContainer<>(biomeRegistry.asHolderIdMap(), biomeRegistry.getHolderOrThrow(Biomes.PLAINS), PalettedContainer.Strategy.SECTION_BIOMES)
+            );
+        }
+        return new LevelChunk(level, new ChunkPos(chunkX, chunkZ), UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, sections, null, null);
+    }
+
+    public boolean isOutsideBuildHeight(final Vec3i pos) {
+        return pos.getY() < this.minBuildHeight || pos.getY() >= this.maxBuildHeight;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.level.getHeight();
+    }
+
+    @Override
+    public int getMinBuildHeight() {
+        return this.minBuildHeight;
+    }
+}

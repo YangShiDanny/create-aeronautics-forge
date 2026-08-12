@@ -1,0 +1,218 @@
+// Create Aeronautics — Forge 1.20.1 merged build (NeoForge 1.21.1 -> Forge 1.20.1)
+// sable is FOLDED IN (dev.ryanhcode.sable.* source lives in src/main/java), so no external sable dependency.
+// Built with ForgeGradle 5.1.x. Requires JDK 17.
+buildscript {
+    repositories {
+        maven { url = uri('https://maven.minecraftforge.net') }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+
+version = '1.3.0'
+group = 'dev.eriksonn.aeronautics'
+archivesBaseName = 'create-aeronautics-forge-1.20.1'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                aeronautics { sources sourceSets.main }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                aeronautics { sources sourceSets.main }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            // 合并 jar 含四个模组，数据生成必须覆盖全部，否则其余模组的
+            // 方块状态/模型 JSON 缺失，游戏用紫黑"缺失贴图"兜底。
+            // 四个模组的数据都要生成（--mod 全列 + mods{} 全列，否则其余模组
+            // 的 GatherDataEvent 不触发、数据缺失）。Forge 多模组会把每个模组
+            // 输出再套一层 <modId>/ 目录，由 build_mod.bat 的 :flatten_gen
+            // 子程序拍平成 assets/<modId>/... （jar 正确路径）。
+            args '--mod', 'aeronautics', '--mod', 'offroad', '--mod', 'simulated', '--mod', 'sable', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            mods {
+                aeronautics { sources sourceSets.main }
+                offroad { sources sourceSets.main }
+                simulated { sources sourceSets.main }
+                sable { sources sourceSets.main }
+            }
+        }
+    }
+}
+
+sourceSets.main {
+    resources { srcDir 'src/generated/resources' }
+    java {
+        // Exclude render paths that depend on Veil 4.x / Sodium (no Forge 1.20.1 equivalent).
+        // These are deferred to phase 2 (Embeddium-native rewrite). The vanilla fallback remains.
+        exclude '**/sublevel/render/fancy/**'
+        exclude '**/sublevel/render/dispatcher/FancySubLevelRenderDispatcher.java'
+        exclude '**/sublevel/render/dispatcher/SubLevelTextureCache.java'
+        exclude '**/sublevel_render/impl/sodium/**'
+        // Leashable (NeoForge 1.21.1 interface) and PathfindingContext (absent in 1.20.1)
+        exclude '**/entity_leashing/LeashableMixin.java'
+        exclude '**/entity_pathfinding/PathfindingContextMixin.java'
+
+        // ---- Phase-1 exclusions: optional third-party compat with no Forge 1.20.1 port ----
+        // ComputerCraft (dan200.computercraft = CC:Tweaked, add dep in phase 2)
+        exclude '**/compat/computercraft/**'
+        exclude '**/compatibility/computercraft/**'
+        // ComputerCraft peripheral service (computercraft API not available)
+        exclude '**/service/compat/SimPeripheralService.java'
+        exclude '**/service/compat/NeoForgeSimPeripheralService.java'
+        // JEI (mezz.jei) — add jei-1.20.1 dep in phase 2
+        exclude '**/compat/jei/**'
+        exclude '**/silence_jei/**'
+        exclude '**/neoforge/compat/jei/**'
+        // PMWeather / Jade / Vista / Exposure / Backpacks / compasses (compat only)
+        exclude '**/compatibility/pmweather/**'
+        exclude '**/compatibility/jade/**'
+        exclude '**/compatibility/jadeaddons/**'
+        exclude '**/compatibility/vista/**'
+        exclude '**/compatibility/exposure/**'
+        exclude '**/compatibility/backpacks/**'
+        exclude '**/compat/explorerscompass/**'
+        exclude '**/compat/naturescompass/**'
+        // glslprocessor (Veil shader compiler) + end_sea veil shader block
+        exclude '**/content/end_sea/**'
+        exclude '**/mixin/end_sea/**'
+        exclude '**/network/packets/end_sea/**'
+        // Iris / Sodium render compat (already partly excluded)
+        exclude '**/mixin/render/iris/**'
+        exclude '**/mixin/render/sodium/**'
+        exclude '**/compatibility/iris/**'
+
+        // ---- Phase-1 exclusions: broken / optional NeoForge-only features ----
+        // [2026-07-17] Physics Staff is a CORE item — RESTORED.
+        // Its package was already ported to 1.20.1 APIs; it only failed to
+        // compile because it was excluded here. (Veil shim was extended with the
+        // missing server()/all() packet sinks so the staff's network works.)
+        // SodiumExtras (toni.sodiumextras not on Forge 1.20.1)
+        exclude '**/mixin/compatibility/sodiumextras/**'
+        // Create lectern_controller / nozzle client extensions (target interfaces absent in Create 6.0.8)
+        exclude '**/mixin/compatibility/create/lectern_controller/**'
+        exclude '**/mixin/compatibility/create/nozzle/**'
+        exclude '**/mixinhelper/compatibility/create/nozzles/**'
+
+        // Create 6.0.8 的 Create 类在开发环境已反混淆（official 映射），
+        // 这三个 @Overwrite Mixin 无法生成 obfuscation 映射，按 phase-1 排除（Create 兼容特性，phase-2 再补）。
+        exclude '**/mixin/compatibility/create/blueprint/BlueprintEntityMixin.java'
+        exclude '**/mixin/compatibility/create/frogports/ChainConveyorInteractionHandlerMixin.java'
+        exclude '**/mixin/compatibility/create/frogports/PackagePortTargetSelectionHandlerMixin.java'
+        // SessionSearchTrees mixins (NeoForge-only helper; entries also removed from simulated.mixins.json)
+        exclude '**/mixin/search_alias/SessionSearchTreesMixin.java'
+        exclude '**/mixin/tooltip_flag/SessionSearchTreesMixin.java'
+        // PhysicsStaffItemMixin: RESTORED — PhysicsStaffItem is back, so this
+        // mixin (registers the staff's custom item renderer) now compiles.
+        // ClientTooltipFlagMixin: STILL excluded — TooltipFlag is an enum in
+        // 1.20.1 (not the NeoForge interface), so this mixin cannot compile.
+        exclude '**/mixin/tooltip_flag/ClientTooltipFlagMixin.java'
+    }
+}
+
+repositories {
+    maven { url = uri('https://maven.minecraftforge.net') }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.20'
+
+    // Create 6.0.8 for Forge 1.20.1 + bundled helpers.
+    // 根因：libs/ 下原始 jar 为 SRG 混淆态，flat files() 不会被重映射，
+    //   导致几百个「未覆盖/找不到符号」（尤其是 Create 系调用对不上官方名）。
+    // 修复：改用 Maven 坐标 + fg.deobf() 包裹。fg.deobf 会从 mavenLocal()
+    //   （_setup_mavenlocal.py 已从 libs/ 发布的本地仓）解析 jar，并自动 SRG->official 重映射。
+    //   fg.deobf 对已是官方名的库( registrate / mixinextras )无害。
+    // libs/ 原 jar 保留作备份，未删除。
+    implementation fg.deobf('com.simibubi.create:create-1.20.1:6.0.8')
+    implementation fg.deobf('com.jozuha.flywheel:flywheel-forge-1.20.1:1.0.5')
+    implementation fg.deobf('com.simibubi.ponder:Ponder-Forge-1.20.1:1.0.91')
+    implementation fg.deobf('com.tterrag.registrate:Registrate-MC1.20:1.3.3')
+    implementation fg.deobf('io.github.tterrag1092:mixinextras-forge:0.4.1')
+    implementation fg.deobf('io.github.tterrag1092:mixinextras:0.4.1')
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+    // ShoulderSurfing 兼容 Mixin 的可选编译依赖：仅用于 Mixin 注解处理器在编译期定位
+    // com.github.exopandora.shouldersurfing.api.client.Perspective（ASM 读字节码，不解析引用类，
+    // 故保留 SRG 态 jar 即可，切勿用 fg.deobf 包裹——否则 Perspective.of 签名会变成 official 态
+    // (of(Lnet/minecraft/client/CameraType;Z))，与兼容 Mixin 里写的 SRG 签名 of(Lena;Z) 不匹配）。
+    // 运行时由玩家自行安装的 ShoulderSurfing 提供；未安装时 ShoulderSurfingPerspectiveCompatMixin
+    // 因 require=0 自动跳过，无任何副作用。
+    compileOnly files('libs/ShoulderSurfing-Forge-1.20.1-5.0.4.jar')
+
+    implementation 'org.lz4:lz4-java:1.8.0'
+}
+
+mixin {
+    add sourceSets.main, 'aeronautics.refmap.json'
+}
+
+tasks.named('sourcesJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// [1.20.1 移植·修复] runData 会把部分标签（如 sable:always_chunk_rendering）自动生成到
+// src/generated/resources，而同一标签的手写完整版（含 computercraft 等额外条目）在
+// src/main/resources。两者同名会导致 processResources 默认 FAIL 报 "duplicate entry"。
+// 这里设 EXCLUDE：src/main/resources 在 srcDirs 中先于 src/generated/resources 被复制，
+// 故完整手写版优先、残缺 datagen 版被跳过，标签内容以手写版为准。
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jar {
+    manifest {
+        attributes([
+            'MixinConfigs'         : 'sable.mixins.json,sable-forge.mixins.json,aeronautics.mixins.json,aeronautics.neoforge.mixins.json,offroad.mixins.json,offroad.neoforge.mixins.json,simulated.mixins.json,simulated-neoforge.mixins.json',
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor' : 'dev.eriksonn.aeronautics',
+            'Specification-Title'   : 'create-aeronautics',
+            'Specification-Version' : project.version,
+            'Specification-Vendor' : 'Simulated Team'
+        ])
+    }
+    from({
+        def lz4 = configurations.compileClasspath.find { it.name.startsWith('lz4-java') }
+        lz4 != null ? zipTree(lz4) : project.files()
+    }) {
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/**'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xmaxerrs', '3000', '-Xlint:none']
+}

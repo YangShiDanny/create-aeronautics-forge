@@ -1,0 +1,74 @@
+package dev.ryanhcode.sable.mixin.particle;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.api.SubLevelHelper;
+import dev.ryanhcode.sable.mixinterface.particle.ParticleExtension;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
+import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+/**
+ * Before ticking a particle, try and kick it from a {@link LevelPlot}
+ */
+@Mixin(ParticleEngine.class)
+public abstract class ParticleEngineMixin {
+
+    @Shadow public abstract void add(Particle particle);
+
+    @Shadow protected ClientLevel level;
+
+    @Inject(method = "add", at = @At("TAIL"))
+    private void sable$onParticleAdd(final Particle particle, final CallbackInfo ci) {
+        ((ParticleExtension) particle).sable$initialKickOut();
+    }
+
+    @WrapOperation(method = {"m_107388_", "m_107393_"}, remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;m_5989_()V", remap = false))
+    private void sable$onParticleTick(final Particle instance, final Operation<Void> original) {
+        final ParticleExtension extension = ((ParticleExtension) instance);
+
+        extension.sable$initialKickOut();
+        original.call(instance);
+        extension.sable$moveWithInheritedVelocity();
+    }
+
+    @WrapOperation(method = "m_107367_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;m_6569_(F)Lnet/minecraft/client/particle/Particle;", remap = false))
+    private Particle sable$addCrackParticle(final Particle particle, final float v, final Operation<Particle> cir) {
+        final Vec3 particlePosition = new Vec3(particle.x, particle.y, particle.z);
+
+        final SubLevel subLevel = Sable.HELPER.getContaining(this.level, particlePosition);
+        if (subLevel != null) {
+            final Vec3 velocity = new Vec3(particle.xd, particle.yd, particle.zd);
+            final Vec3 globalVelocity = subLevel.logicalPose().transformNormal(velocity);
+
+            particle.xd = globalVelocity.x;
+            particle.yd = globalVelocity.y;
+            particle.zd = globalVelocity.z;
+
+            cir.call(particle, v);
+
+            final Vec3 localVelocity = subLevel.logicalPose().transformNormalInverse(new Vec3(particle.xd, particle.yd, particle.zd));
+
+            particle.xd = localVelocity.x;
+            particle.yd = localVelocity.y;
+            particle.zd = localVelocity.z;
+            ((ParticleExtension) particle).sable$setTrackingSubLevel((ClientSubLevel) subLevel, particlePosition);
+
+            return particle;
+        } else {
+            return cir.call(particle, v);
+        }
+    }
+
+}

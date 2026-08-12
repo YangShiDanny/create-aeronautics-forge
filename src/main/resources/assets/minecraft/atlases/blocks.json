@@ -1,0 +1,41 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "aeronautics:fluid/levitite_blend_still"
+    },
+    {
+      "type": "single",
+      "resource": "aeronautics:fluid/levitite_blend_flow"
+    },
+    {
+      "type": "single",
+      "resource": "simulated:banner"
+    },
+    {
+      "type": "single",
+      "resource": "aeronautics:banner"
+    },
+    {
+      "type": "single",
+      "resource": "offroad:banner"
+    },
+    {
+      "type": "single",
+      "resource": "simulated:gui/sprites/default_banner",
+      "sprite": "simulated:default_banner"
+    },
+    {
+      "type": "single",
+      "resource": "simulated:entity/diagram_small"
+    },
+    {
+      "type": "single",
+      "resource": "simulated:entity/diagram_medium"
+    },
+    {
+      "type": "single",
+      "resource": "simulated:entity/diagram_large"
+    }
+  ]
+}

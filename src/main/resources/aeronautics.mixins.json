@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.eriksonn.aeronautics.mixin",
+  "refmap": "aeronautics.refmap.json",
+  "plugin": "dev.eriksonn.aeronautics.plugin.AeroMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "balloon.SimAssemblyHelperMixin",
+    "balloon.SubLevelAssemblyHelperMixin",
+    "flywheel_block_entity.FlywheelBlockEntityMixin",
+    "item_converter.ItemEntityMixin",
+    "levitite.BlockMixin",
+    "levitite.ItemEntityMixin",
+    "levitite.WaterWheelBlockEntityMixin",
+    "ponder.DisplayWorldSectionInstructionMixin",
+    "ponder.TickingInstructionAccessor",
+    "ponder.TickingInstructionMixin",
+    "ponder.WorldSectionElementImplAccessor",
+    "potato_cannon_projectiles.PotatoProjectileEntityMixin",
+    "propeller_bearing.BearingContraptionMixin",
+    "propeller_bearing.PropellerBearingContraptionEntityMixin",
+    "propeller_collision.ContraptionColliderMixin",
+    "sable_hooks.SableCommonEventsMixin",
+    "steam_vent.BoilerDataMixin"
+  ],
+  "client": [
+    "balloon.LevelChunkMixin",
+    "custom_situational_music.MinecraftMixin",
+    "custom_situational_music.MusicManagerAccessor",
+    "levitite.PonderUIMixin",
+    "levitite.TerrainParticleMixin",
+    "levitite.VanillaChunkedSubLevelRenderDataMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

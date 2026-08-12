@@ -1,0 +1,41 @@
+package dev.simulated_team.simulated.network.packets.name_plate;
+import dev.simulated_team.simulated.backport.BackportCodecs;
+
+import dev.simulated_team.simulated.Simulated;
+import dev.simulated_team.simulated.content.blocks.nameplate.NameplateBlockEntity;
+import foundry.veil.api.network.handler.ServerPacketContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import dev.simulated_team.simulated.libs.minecraft.network.codec.ByteBufCodecs;
+import dev.simulated_team.simulated.libs.minecraft.network.codec.StreamCodec;
+import dev.simulated_team.simulated.libs.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+
+public record NameplateChangeNamePacket(BlockPos controllerPos,  String name) implements CustomPacketPayload {
+
+    public static Type<NameplateChangeNamePacket> TYPE = new Type<>(Simulated.path("nameplate_change_name"));
+
+    public static StreamCodec<FriendlyByteBuf, NameplateChangeNamePacket> CODEC = StreamCodec.composite(
+            BackportCodecs.BLOCK_POS, NameplateChangeNamePacket::controllerPos,
+            ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), (packet) -> Optional.ofNullable(packet.name()),
+            NameplateChangeNamePacket::fromCodec);
+
+    public static NameplateChangeNamePacket fromCodec(final BlockPos controllerPos, final Optional<String> name) {
+        return new NameplateChangeNamePacket(controllerPos, name.orElse(null));
+    }
+
+    public void handle(final ServerPacketContext context) {
+        final Level level = context.level();
+        if (level.getBlockEntity(this.controllerPos()) instanceof final NameplateBlockEntity nbe && nbe.allowsEditing()) {
+            nbe.setName(this.name, true, context.getPlayer());
+        }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+}

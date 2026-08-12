@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.ryanhcode.offroad.mixin",
+  "refmap": "aeronautics.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MountedStorageAccessor",
+    "RotationPropagatorMixin",
+    "borehead_collision.BoreheadContraptionEntityMixin"
+  ],
+  "client": [
+    "client.multimining_destruction_progress.LevelRenderMixin",
+    "client.multimining_destruction_progress.ClientLevelAccessor"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

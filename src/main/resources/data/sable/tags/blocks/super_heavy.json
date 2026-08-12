@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:storage_blocks",
+    "#minecraft:anvil"
+  ],
+  "remove": [
+    { "id": "create:cardboard_block", "required": false },
+    "minecraft:copper_block",
+    "minecraft:slime_block",
+    "minecraft:bone_block"
+  ]
+}

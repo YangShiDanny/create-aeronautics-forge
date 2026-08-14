@@ -8,17 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu‑latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          fetch‑depth: 0
+          fetch-depth: 0
 
       - name: Setup JDK 17
-        uses: actions/setup‑java@v5
+        uses: actions/setup-java@v5
         with:
-          java‑version: '17'
+          java-version: '17'
           distribution: 'temurin'
 
       # 关键：gradle缓存，加速CI
@@ -28,7 +28,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}‑gradle‑${{ hashFiles('**/*.gradle*','**/gradle‑wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
 
       - name: Make gradlew可执行
         run: chmod +x ./gradlew
@@ -39,7 +39,7 @@ jobs:
 
       # 上传构建产物（仅纯代码jar，不含贴图模型！）
       - name: Upload built jar artifacts
-        uses: actions/upload‑artifact@v4
+        uses: actions/upload-artifact@v4
         with:
-          name: mod‑jar‑codeonly
+          name: mod-jar-codeonly
           path: build/libs/*.jar

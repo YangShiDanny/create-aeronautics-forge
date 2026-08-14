@@ -21,16 +21,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # CI环境安装gradle，用于动态生成wrapper
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      # 手动下载安装 Gradle 7.6.4（ForgeGradle旧版本唯一兼容版本）
+      - name: Install Gradle 7.6.4
+        run: |
+          wget https://services.gradle.org/distributions/gradle-7.6.4-bin.zip
+          unzip gradle-7.6.4-bin.zip
+          echo "$PWD/gradle-7.6.4/bin" >> $GITHUB_PATH
 
-      # 如果不存在gradlew，就自动生成 gradle wrapper
       - name: Generate Gradle Wrapper if missing
         run: |
           if [ ! -f ./gradlew ]; then
             echo "gradlew not found, generating wrapper..."
-            gradle wrapper
+            gradle wrapper --gradle-version 7.6.4
           fi
 
       - name: Make gradlew executable

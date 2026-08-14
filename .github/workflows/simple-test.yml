@@ -1,0 +1,9 @@
+name: simple‑test
+on: workflow_dispatch
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo test
+        run: echo "✅如果这条任务能跑，说明仓库runner完全正常，问题出在你的build.yml"

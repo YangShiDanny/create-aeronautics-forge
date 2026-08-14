@@ -4,7 +4,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch: #支持手动点击触发构建
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,7 +21,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 关键：gradle缓存，加速CI
+      # CI环境安装gradle，用于动态生成wrapper
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # 如果不存在gradlew，就自动生成 gradle wrapper
+      - name: Generate Gradle Wrapper if missing
+        run: |
+          if [ ! -f ./gradlew ]; then
+            echo "gradlew not found, generating wrapper..."
+            gradle wrapper
+          fi
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -30,14 +44,9 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
 
-      - name: Make gradlew可执行
-        run: chmod +x ./gradlew
-
-      # 执行构建：clean + build，不会包含任何assets美术资源
       - name: Run Gradle build
         run: ./gradlew clean build
 
-      # 上传构建产物（仅纯代码jar，不含贴图模型！）
       - name: Upload built jar artifacts
         uses: actions/upload-artifact@v4
         with:

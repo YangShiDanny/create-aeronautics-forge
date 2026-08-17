@@ -140,9 +140,7 @@ sourceSets.main {
 repositories {
     maven { url = uri('https://maven.minecraftforge.net') }
     maven { url = uri('https://maven.blamejared.com') }
-    
-    maven { url "https://maven.blamejared.com" }
-    maven { url "https://cursemaven.com" }
+    maven { url "https://maven.simibubi.dev" }
     mavenCentral()
     mavenLocal()
 }

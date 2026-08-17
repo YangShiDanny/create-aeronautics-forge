@@ -21,7 +21,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      # 全局安装gradle7.6.3，在CI容器现场生成正确版本wrapper
+      - name: Setup Global Gradle 7.6.3
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: 7.6.3
+
+      - name: Generate Gradle Wrapper 7.6.3 inside CI
+        run: gradle wrapper --gradle-version=7.6.3
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

@@ -140,10 +140,10 @@ sourceSets.main {
 repositories {
     maven { url = uri('https://maven.minecraftforge.net') }
 
-    // Create, Flywheel, Ponder
-    maven {
-        url = "https://maven.createmod.net"
-        allowInsecureProtocol = true
+    // Local
+    flatDir {
+    dir 'libs'
+    }
     }
 
     // Registrate

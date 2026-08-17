@@ -144,7 +144,6 @@ repositories {
     flatDir {
     dir 'libs'
     }
-    }
 
     // Registrate
     maven {

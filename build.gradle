@@ -4,6 +4,7 @@
 buildscript {
     repositories {
         maven { url = uri('https://maven.minecraftforge.net') }
+        maven { url "https://maven.blamejared.com" }
         mavenCentral()
     }
     dependencies {

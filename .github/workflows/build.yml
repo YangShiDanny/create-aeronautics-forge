@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch: # 支持手动点按钮构建
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,25 +15,32 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # 必须把libs目录完整拉下来，仓库内自带第三方依赖
-          submodules: false
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
+      # 安装全局 Gradle，用于现场生成 wrapper
+      - name: Setup Gradle (global)
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: 8.5 # 和你项目gradle.properties匹配的版本
+
+      # CI临时生成 gradle wrapper（仅CI容器内，不会提交回github仓库）
+      - name: Generate Gradle Wrapper on‑the‑fly
+        run: gradle wrapper
+
+      - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build Mod
         run: ./gradlew build
 
       - name: Upload built mod jar
         uses: actions/upload-artifact@v4
         with:
-          name: CreateAeronautics-Forge-1.20.1
+          name: CreateAeronautics‑Forge‑1.20.1
           path: build/libs/*.jar
           retention-days: 30

@@ -142,7 +142,7 @@ repositories {
 
     // Create, Flywheel, Ponder
     maven {
-        url = "https://maven.simibubi.dev"
+        url = "https://maven.createmod.net"
         allowInsecureProtocol = true
     }
 

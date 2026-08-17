@@ -21,21 +21,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
-      # 安装全局 Gradle，用于现场生成 wrapper
-      - name: Setup Gradle (global)
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          gradle-version: 8.5 # 和你项目gradle.properties匹配的版本
-
-      # CI临时生成 gradle wrapper（仅CI容器内，不会提交回github仓库）
-      - name: Generate Gradle Wrapper on‑the‑fly
-        run: gradle wrapper
-
-      - name: Grant execute permission
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Mod
+      - name: Build with Gradle
         run: ./gradlew build
 
       - name: Upload built mod jar

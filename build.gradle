@@ -139,8 +139,32 @@ sourceSets.main {
 
 repositories {
     maven { url = uri('https://maven.minecraftforge.net') }
-    maven { url = uri('https://maven.blamejared.com') }
-    maven { url "https://maven.simibubi.dev" }
+
+    // Create, Flywheel, Ponder
+    maven {
+        url = "https://maven.createmod.net"
+        allowInsecureProtocol = true
+    }
+
+    // Registrate
+    maven {
+        url = "https://mvn.devos.one/snapshots"
+        allowInsecureProtocol = true
+    }
+
+    // MixinExtras
+    maven {
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+        allowInsecureProtocol = true
+    }
+
+    // Jared maven
+    maven {
+        name = 'Jared maven'
+        url = 'https://maven.blamejared.com/'
+        allowInsecureProtocol = true
+    }
+
     mavenCentral()
     mavenLocal()
 }

@@ -23,7 +23,7 @@ public class GimbalSensorRenderer extends SafeBlockEntityRenderer<GimbalSensorBl
     }
 
     @Override
-    protected void renderSafe(final GimbalSensorBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int , final float partialTicks) {
+    protected void renderSafe(final GimbalSensorBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         FilteringRenderer.renderOnBlockEntity(be, partialTicks, ms, buffer, light, overlay);
 
         if (VisualizationManager.supportsVisualization(be.getLevel())) {

@@ -57,6 +57,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ExplosionDecay;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 
@@ -159,10 +160,15 @@ public class AeroBlocks {
                         .withExistingParent(colorName + "_envelope_encased_shaft",
                                 p.modLoc("block/envelope_encased_shaft/block"))
                         .texture("0", p.modLoc("block/envelope_block/envelope_" + colorName))))
-                .loot((p, b) -> p.add(b, p.createSingleItemTable(DYED_ENVELOPE_BLOCKS.get(color))
-                        .withPool(p.applyExplosionCondition(AllBlocks.SHAFT.get(), LootPool.lootPool()
+                .loot(block -> LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))))))
+                                .add(LootItem.lootTableItem(DYED_ENVELOPE_BLOCKS.get(color))))
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))
+                                .apply(net.minecraft.world.level.storage.loot.functions.ExplosionDecay.explosionDecay()))
+                )
                 .tag(AeroTags.BlockTags.ENVELOPE)
                 .transform(axeOnly())
                 .transform(EncasingRegistry.addVariantTo(AllBlocks.SHAFT))

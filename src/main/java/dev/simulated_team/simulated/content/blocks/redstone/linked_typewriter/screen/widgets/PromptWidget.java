@@ -7,6 +7,7 @@ import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 public class PromptWidget extends AbstractSimiWidget {
 
@@ -52,5 +53,11 @@ public class PromptWidget extends AbstractSimiWidget {
 
         this.bindingActive = false;
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    // ===新增：无障碍叙述重写===
+    @Override
+    protected void updateWidgetNarration(@NotNull Component narrationMessage) {
+        defaultButtonNarrationText(narrationMessage);
     }
 }

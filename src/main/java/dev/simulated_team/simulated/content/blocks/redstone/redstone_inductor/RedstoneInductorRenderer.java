@@ -21,7 +21,7 @@ public class RedstoneInductorRenderer extends ColoredOverlayBlockEntityRenderer<
     }
 
     @Override
-    protected void renderSafe(final RedstoneInductorBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    protected void renderSafe(final RedstoneInductorBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         if (VisualizationManager.supportsVisualization(be.getLevel())) {
             return;
         }

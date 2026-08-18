@@ -51,8 +51,8 @@ public class ThrottleLeverRenderer extends SafeBlockEntityRenderer<ThrottleLever
     }
 
     @Override
-    protected void renderSafe(final ThrottleLeverBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource bufferSource,
-                              final int light, final int overlay) {
+    protected void renderSafe(final ThrottleLeverBlockEntity be, final PoseStack ms, final MultiBufferSource bufferSource,
+                              final int light, final int overlay, final float partialTicks) {
         final BlockState leverState = be.getBlockState();
         final float state = be.clientAngle.getValue(partialTicks);
         final AttachFace face = be.getBlockState().getValue(FaceAttachedHorizontalDirectionalBlock.FACE);

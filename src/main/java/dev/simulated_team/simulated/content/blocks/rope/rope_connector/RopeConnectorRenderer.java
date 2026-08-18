@@ -34,7 +34,7 @@ public class RopeConnectorRenderer extends SafeBlockEntityRenderer<RopeConnector
     }
 
     @Override
-    protected void renderSafe(final RopeConnectorBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    protected void renderSafe(final RopeConnectorBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         RopeStrandRenderer.render(be, be.getRopeHolder(), partialTicks, ms, buffer);
 
         final RopeStrandHolderBehavior holder = be.getRopeHolder();

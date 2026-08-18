@@ -60,7 +60,7 @@ public class RopeWinchRenderer extends SafeBlockEntityRenderer<RopeWinchBlockEnt
         return true;
     }
 
-    protected void renderSafe(final RopeWinchBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    protected void renderSafe(final RopeWinchBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         FilteringRenderer.renderOnBlockEntity(be, partialTicks, ms, buffer, light, overlay);
         this.renderComponents(be, partialTicks, ms, buffer, light, overlay);
     }

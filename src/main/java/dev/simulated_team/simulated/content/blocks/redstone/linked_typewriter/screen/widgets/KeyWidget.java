@@ -69,7 +69,7 @@ public class KeyWidget extends AbstractSimiWidget {
 
         if (this.icon != null) {
             if (this.bound) RenderSystem.setShaderColor(0.447f, 0.278f, 0.192f, 1.0f);
-                else RenderSystem.setShaderColor(0.318f, 0.125f, 0.094f, 1.0f);
+            else RenderSystem.setShaderColor(0.318f, 0.125f, 0.094f, 1.0f);
             this.icon.render(graphics, this.getX() + 3, y + 4);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         } else {
@@ -138,10 +138,16 @@ public class KeyWidget extends AbstractSimiWidget {
     }
 
     private void renderBackground( final GuiGraphics pGuiGraphics, final int x, final int y, final int w, final int h) {
-        // [1.20.1 修复] 源版 1.21.1 用 blitSprite 绘制九宫格背景；1.20.1 该纹理未注册为 nine-slice sprite，
+        // [1.20.1 修复] 源版 1.21.1 用 blitSprite 绘制九宫格背景；1.20.1 该纹理未注册为 nine‑slice sprite，
         // 直接 blit 采样越界会渲染成黑块，叠加黑色文字导致「黑框无字」。改为自绘浅色背景框 + 深棕边框，
         // 保证黑字可见，视觉接近原版 tooltip。
         pGuiGraphics.fill(x - 1, y - 1, x + w + 1, y + h + 1, 0xFF3A2A1A);
         pGuiGraphics.fill(x, y, x + w, y + h, 0xFFE8D8C0);
+    }
+
+    // ===新增：无障碍叙述重写===
+    @Override
+    protected void updateWidgetNarration(@NotNull Component narrationMessage) {
+        defaultButtonNarrationText(narrationMessage);
     }
 }

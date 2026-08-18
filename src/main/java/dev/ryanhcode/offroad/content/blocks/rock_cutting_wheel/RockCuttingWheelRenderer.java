@@ -55,7 +55,7 @@ public class RockCuttingWheelRenderer extends SafeBlockEntityRenderer<RockCuttin
     }
 
     @Override
-    protected void renderSafe(final RockCuttingWheelBlockEntity blockEntity, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    protected void renderSafe(final RockCuttingWheelBlockEntity blockEntity, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         final BlockState state = blockEntity.getBlockState();
         final SuperByteBuffer wheel = CachedBuffers.partial(OffroadPartialModels.ROCK_CUTTING_WHEEL_WHEEL, state);
 

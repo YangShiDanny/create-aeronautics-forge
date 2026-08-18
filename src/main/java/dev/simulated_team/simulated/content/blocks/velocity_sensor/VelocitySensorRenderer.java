@@ -19,7 +19,7 @@ public class VelocitySensorRenderer extends SafeBlockEntityRenderer<VelocitySens
     }
 
     @Override
-    protected void renderSafe(final VelocitySensorBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay) {
+    protected void renderSafe(final VelocitySensorBlockEntity be, final PoseStack ms, final MultiBufferSource buffer, final int light, final int overlay, final float partialTicks) {
         final VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
         final BlockState state  = be.getBlockState();

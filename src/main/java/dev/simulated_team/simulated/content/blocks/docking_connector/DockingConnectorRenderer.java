@@ -24,7 +24,7 @@ public class DockingConnectorRenderer extends SafeBlockEntityRenderer<DockingCon
     }
 
     @Override
-    protected void renderSafe(final DockingConnectorBlockEntity be, final float partialTicks, final PoseStack ms, final MultiBufferSource bufferSource, final int light, final int overlay) {
+    protected void renderSafe(final DockingConnectorBlockEntity bes, final PoseStack ms, final MultiBufferSource bufferSource, final int light, final int overlay, final float partialTick) {
         final VertexConsumer vb = bufferSource.getBuffer(RenderType.cutout());
         final Direction direction = be.getBlockState()
                 .getValue(BlockStateProperties.FACING);

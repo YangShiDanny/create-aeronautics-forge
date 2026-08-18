@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KineticBlockEntity.class)
-//TODO: fix contraptions moving ExtraKinetic BlockEntities and creating a timestamp-space split, allowing wireless networks to exist
+//TODO: fix contraptions moving ExtraKinetic BlockEntities and creating a timestamp‑space split, allowing wireless networks to exist
 public abstract class KineticBlockEntityMixin extends SmartBlockEntity implements KineticBlockEntityExtension {
 
     public KineticBlockEntityMixin(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
@@ -39,7 +39,9 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
     @Shadow
     public abstract void initialize();
 
-    @Shadow private int validationCountdown;
+    @Shadow
+    private int validationCountdown;
+
     @Unique
     private boolean simulated$extraKineticsConnected = false;
 
@@ -53,15 +55,14 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
         return this.simulated$extraKineticsConnected;
     }
 
+    // 修复：原方法是static注入却使用this，改为非static，放弃switchToBlockState静态注入，改为@Inject onTick / 或者访问local变量，这里改用Local捕获BE实例
     @Inject(remap = false, method = "switchToBlockState", at = @At("TAIL"))
-    private static void simulated$switchExtraKinetics(final Level world, final BlockPos pos, final BlockState state, final CallbackInfo ci) {
-        final BlockEntity be = world.getBlockEntity(pos);
+    private void simulated$switchExtraKinetics(final Level world, final BlockPos pos, final BlockState state, final CallbackInfo ci, @Local BlockEntity be) {
         if (be instanceof final ExtraKinetics ek) {
             final KineticBlockEntity extraKinetics = ek.getExtraKinetics();
             if (extraKinetics != null) {
                 if (extraKinetics.hasNetwork()) {
                     extraKinetics.getOrCreateNetwork().remove(extraKinetics);
-
                     extraKinetics.detachKinetics();
                     extraKinetics.removeSource();
 
@@ -79,7 +80,6 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
         if (be instanceof final ExtraKinetics ek && this.simulated$extraKineticsConnected) {
             be = ek.getExtraKinetics();
         }
-
         return be;
     }
 
@@ -90,7 +90,6 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
             this.simulated$extraKineticsConnected = true;
             be = ek.getExtraKinetics();
         }
-
         return be;
     }
 
@@ -142,6 +141,7 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
         this.simulated$extraKineticsConnected = false;
     }
 
+    // Create‑Forge1.20.1 write：参数 (CompoundTag tag, boolean clientPacket)，无HolderLookup
     @Inject(remap = false, method = "write", at = @At("TAIL"))
     public void simulated$saveConnected(final CompoundTag compound, final boolean clientPacket, final CallbackInfo ci) {
         if (this instanceof final ExtraKinetics ek) {
@@ -153,30 +153,24 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity implement
                 } else {
                     extraKinetics.saveAdditional(internalTag);
                 }
-
                 compound.put(ek.getExtraKineticsSaveName(), internalTag);
             }
         }
-
         if (this.hasSource()) {
             compound.putBoolean("ConnectedToExtraKinetics", this.simulated$extraKineticsConnected);
         }
     }
 
+    // Create‑Forge1.20.1 read：(CompoundTag tag, HolderLookup.Provider registries)
     @Inject(remap = false, method = "read", at = @At("TAIL"))
-    public void simulated$readConnected(final CompoundTag compound, final boolean clientPacket, final CallbackInfo ci) {
+    public void simulated$readConnected(final CompoundTag compound, final HolderLookup.Provider registries, final CallbackInfo ci) {
         if (this instanceof final ExtraKinetics ek) {
             final KineticBlockEntity extraKinetics = ek.getExtraKinetics();
             if (extraKinetics != null) {
                 final CompoundTag extraKineticsTag = compound.getCompound(ek.getExtraKineticsSaveName());
-                if (clientPacket) {
-                    extraKinetics.readClient(extraKineticsTag);
-                } else {
-                    extraKinetics.load(extraKineticsTag);
-                }
+                extraKinetics.load(extraKineticsTag, registries);
             }
         }
-
         if (compound.contains("ConnectedToExtraKinetics")) {
             this.simulated$extraKineticsConnected = compound.getBoolean("ConnectedToExtraKinetics");
         }

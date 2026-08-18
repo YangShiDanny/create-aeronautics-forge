@@ -4,7 +4,9 @@ import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.Li
 import dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter.screen.LinkedTypewriterMenuCommon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -32,6 +34,15 @@ public class LinkedTypewriterMenuImpl extends LinkedTypewriterMenuCommon {
         for (int i = 0; i < 2; i++) {
             this.addSlot(new GhostSlotHandler(this.ghostInventory, i, 105 + (i * 18), 1));
         }
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        // 如果父类持有blockEntity，沿用方块实体的距离校验逻辑
+        if (this.blockEntity != null) {
+            return AbstractContainerMenu.stillValid(player, this.blockEntity.getBlockPos(), this.blockEntity.getBlockState().getBlock());
+        }
+        return true;
     }
 
     private class GhostSlotHandler extends SlotItemHandler {

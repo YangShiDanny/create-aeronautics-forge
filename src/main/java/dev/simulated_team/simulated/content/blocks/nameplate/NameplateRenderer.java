@@ -31,7 +31,7 @@ public class NameplateRenderer extends SafeBlockEntityRenderer<NameplateBlockEnt
         this.context = context;
     }
 
-    public void renderSafe(final NameplateBlockEntity be, final float pPartialTick, final PoseStack ps, final MultiBufferSource pBuffer, int packedLight, final int pPackedOverlay) {
+    public void renderSafe(final NameplateBlockEntity be, final PoseStack ps, final MultiBufferSource pBuffer, int packedLight, final int pPackedOverlay, final float pPartialTick) {
         final Font font = this.context.getFont();
 
         final BlockState state = be.getBlockState();

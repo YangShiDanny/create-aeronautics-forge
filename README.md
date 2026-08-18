@@ -16,16 +16,29 @@
 > 如原模组作者或权利方要求下架，将无条件配合。
 > If the original authors or rights holders request takedown, we will comply unconditionally.
 
-## ⚠️ 许可证与版权 / License & Copyright
+# Create‑Aeronautics‑Forge
+这是 **Create: Aeronautics** 的非官方Forge 1.20.1移植版本。
 
-- 本仓库**仅包含源代码与构建配置**，**不包含任何美术素材**（贴图、模型、音频等）。
-  This repository contains **source code and build config only**; it includes **no art assets** (textures, models, audio, etc.).
-- 所有美术资源（textures / models / sounds 等）的版权归**原模组及其作者**所有，并遵循原模组的各自许可证（All Rights Reserved）。
-  All art assets are copyrighted by **the original mod and its authors** under their respective licenses (All Rights Reserved).
-- 因原模组许可限制，本仓库**不重新分发任何素材**。运行所需素材请从原模组（或其允许的来源）获取。
-  Due to the original mod's license, this repository **does not redistribute any assets**. Obtain them from the original mod.
-- 代码部分在遵守上述前提与原模组 MIT 许可的前提下可参考与学习；商业使用或再分发请先取得原模组作者授权。
-  The code may be studied under the original mod's MIT License and the terms above; for commercial use or redistribution, obtain the original authors' permission first.
+> ⚠️ Copyright Notice
+> This repository contains **both Java source code and original mod assets(textures, models, sounds, lang json)** from the original Create:Aeronautics mod.
+> All graphical/audio assets belong to the original author.
+> This project is for **personal learning & research purpose only**, NOT for commercial usage.
+> If you are the original author and believe this repository violates your copyright, please open an issue to contact me for removal.
+
+本仓库同时包含模组Java源码以及原版mod美术资源（贴图、模型、音效、语言文件）。
+全部美术资源版权归原mod作者所有。
+本项目仅用于个人学习研究，禁止用于商业用途。
+如果您是原作者，认为本仓库侵犯您的版权，请提交issue联系我，我会配合处理。
+
+## Important
+- This is an unofficial port, NOT endorsed by original Create:Aeronautics author.
+- Do not redistribute built mod jars from this repository publicly.
+- GitHub CI builds are for compile‑verification only.
+
+## 构建说明
+1. Clone本仓库
+2. 使用Gradle构建
+> CI编译产出仅用于验证代码编译正确性，不代表正式发布版本。请勿直接公开分发从本仓库构建出的完整mod jar。
 
 完整许可文本与第三方依赖清单见 **[LICENSE](./LICENSE)**。
 The full license text and third-party dependency list are in **[LICENSE](./LICENSE)**.
@@ -51,12 +64,13 @@ The full license text and third-party dependency list are in **[LICENSE](./LICEN
   Native libraries (separate from the official mod):
   - Rapier 物理引擎（桌面端 `sable_rapier_binaries.zip.l4z` + 安卓端 `libsable_rapier.so`，Apache-2.0，Dimforge）
   - 完整库名 / 版本 / 许可对照见 `LICENSE` 第三节。 / Full list in Section 3 of `LICENSE`.
-
-❌ **不包含内容 / Excluded**
 - 贴图（`*.png`）、音频（`*.ogg`）、3D 模型（`*.obj` / `*.bbmodel` / `*.fbx`）
   Textures, audio, 3D models
 - 模型定义（`assets/*/models/**` 下的 `*.json`）
   Model definitions
+
+❌ **不包含内容 / Excluded**
+
 - 构建产物（`build/`）、本地运行环境（`run/`）、Gradle 缓存（`.gradle/`）
   Build output, run dir, Gradle cache
 - 调试 / 临时文件（`_debug/`、各种 `_*.txt` / `_*.py` 等）

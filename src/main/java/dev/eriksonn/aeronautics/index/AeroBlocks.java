@@ -29,6 +29,10 @@ import dev.eriksonn.aeronautics.content.blocks.propeller.small.smart_propeller.S
 import dev.eriksonn.aeronautics.content.blocks.propeller.small.wooden.WoodenPropellerBlock;
 import dev.eriksonn.aeronautics.content.components.Levitating;
 import dev.eriksonn.aeronautics.data.AeroBlockStateGen;
+import dev.eriksonn.aeronautics.index.AeroSoundEvents;
+import dev.eriksonn.aeronautics.index.AeroSpriteShift;
+import dev.eriksonn.aeronautics.index.AeroTags;
+import dev.eriksonn.aeronautics.index.AeroDisplaySources;
 import dev.ryanhcode.sable.index.SableTags;
 import dev.simulated_team.simulated.data.SimBlockStateGen;
 import dev.simulated_team.simulated.index.SimItems;
@@ -57,7 +61,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.ExplosionDecay;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 
@@ -142,7 +146,6 @@ public class AeroBlocks {
 
     public static final DyedBlockList<EnvelopeEncasedShaftBlock> ENVELOPE_ENCASED_SHAFTS = new DyedBlockList<>(color -> {
         String colorName = color.getSerializedName();
-
         return REGISTRATE.block(colorName + "_envelope_encased_shaft", p -> EnvelopeEncasedShaftBlock.withCanvas(p, color))
                 .initialProperties(SharedProperties::wooden)
                 .properties(p -> p.sound(SoundType.SCAFFOLDING))
@@ -167,7 +170,8 @@ public class AeroBlocks {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(LootItem.lootTableItem(AllBlocks.SHAFT.get()))
-                                .apply(net.minecraft.world.level.storage.loot.functions.ExplosionDecay.explosionDecay()))
+                                .apply(LootItemFunctions.EXPLOSION_DECAY)
+                        )
                 )
                 .tag(AeroTags.BlockTags.ENVELOPE)
                 .transform(axeOnly())
@@ -249,6 +253,7 @@ public class AeroBlocks {
                             .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllBlocks.BRASS_CASING.get()))
                             .save(p))
                     .register();
+
     public static final BlockEntry<GyroscopicPropellerBearingBlock> GYROSCOPIC_PROPELLER_BEARING =
             REGISTRATE.block("gyroscopic_propeller_bearing", GyroscopicPropellerBearingBlock::new)
                     .initialProperties(SharedProperties::stone)
@@ -311,7 +316,6 @@ public class AeroBlocks {
                                 .requires(AeroBlocks.WOODEN_PROPELLER.get())
                                 .unlockedBy("has_ingredient", RegistrateRecipeProvider.has(AllItems.PROPELLER.get()))
                                 .save(p, Aeronautics.path(c.getName() + "_from_andesite"));
-
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, c.get(), 1)
                                 .pattern("P")
                                 .pattern("C")
@@ -371,7 +375,6 @@ public class AeroBlocks {
             .build()
             .register();
 
-
     public static final BlockEntry<Block> PEARLESCENT_LEVITITE =
             REGISTRATE.block("pearlescent_levitite", Block::new)
                     .properties(p -> p.lightLevel($ -> 10))
@@ -394,16 +397,10 @@ public class AeroBlocks {
 
     private static <B extends Block, R> NonNullUnaryOperator<BlockBuilder<B, R>> flammable(final int encouragement, final int flamability) {
         return builder -> builder.onRegisterAfter(Registries.BLOCK, block -> {
-            // [1.20.1 port] 原版用反射调用 FireBlock.setFlammable（NeoForge 1.21 暴露的公开 API），
-            // 但 Forge 1.20.1 运行时类是 SRG 混淆（方法名形如 m_53444_），反射字符串写死官方名
-            // 会 NoSuchMethodException。1.20.1 里该方法是 private，已在 accesstransformer.cfg 用 AT
-            // 开放为 public（m_53444_），这里直接调用，由 reobf 在构建时映射到 SRG 名，运行时匹配成功。
             ((FireBlock) Blocks.FIRE).setFlammable(block, encouragement, flamability);
         });
     }
 
     public static void init() {
-
     }
-
 }
